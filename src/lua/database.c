@@ -92,6 +92,12 @@ int dt_lua_move_image(lua_State *L)
   {
     dt_image_move(imgid, filmid);
   }
+    // luaA_push(L, dt_lua_image_t, &imgid); 
+  dt_collection_update_query(darktable.collection, DT_COLLECTION_CHANGE_RELOAD, DT_COLLECTION_PROP_UNDEF,
+                               g_list_prepend(NULL, GINT_TO_POINTER(imgid)));
+    DT_CONTROL_SIGNAL_RAISE(DT_SIGNAL_FILMROLLS_CHANGED);
+    dt_control_queue_redraw_center();
+
   return 0;
 }
 
@@ -177,6 +183,7 @@ static int import_images(lua_State *L)
       return luaL_error(L, "error while importing");
     }
     luaA_push(L, dt_lua_image_t, &result);
+    
     // force refresh of thumbtable view
     dt_collection_update_query(darktable.collection, DT_COLLECTION_CHANGE_RELOAD, DT_COLLECTION_PROP_UNDEF,
                                g_list_prepend(NULL, GINT_TO_POINTER(result)));
